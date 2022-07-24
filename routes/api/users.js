@@ -3,11 +3,16 @@ const router = express.Router();
 
 
 
-// @route GET api/users
-// @desc Get all the users
+// @route POST api/users
+// @desc Register new user
 // @access PUBLIC
-router.get('/', (req, res) => {
-  res.send('User Route')
+router.post('/', (req, res) => {
+
+  // testing the route
+  console.log(req.body);
+
+
+  res.send("User route");
 });
 
 
