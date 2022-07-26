@@ -35,11 +35,11 @@ router.post('/', [
   
   try {
     // get the authenticated user informations
-    const user = await User.findById({ user: req.user.id }).select('-password');
+    const user = await User.findById(req.user.id).select('-password');
     
     // create a new transaction instance
     let newTransaction = new Transaction({
-      userId: mongoose.Types.ObjectId.isValid(req.user.id),
+      userId: req.user.id,
       ref: user.email,
       transactionType: req.body.transactionType,
       amount: req.body.amount,
