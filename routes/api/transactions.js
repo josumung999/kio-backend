@@ -37,7 +37,7 @@ router.post('/', [
     // get the authenticated user informations
     const user = await User.findById(req.user.id).select('-password');
     
-    // create a new transaction instance
+    // create a new transaction instance to be saved in database
     let newTransaction = new Transaction({
       userId: req.user.id,
       ref: user.email,
