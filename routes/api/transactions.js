@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const mongoose = require('mongoose')
 
 // Import auth middleware
 const auth = require('../../middleware/auth');
@@ -31,27 +32,58 @@ router.post('/', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  
+  try {
+    // get the authenticated user informations
+    const user = await User.findById({ user: req.user.id }).select('-password');
+    
+    // create a new transaction instance
+    let newTransaction = new Transaction({
+      userId: mongoose.Types.ObjectId.isValid(req.user.id),
+      ref: user.email,
+      transactionType: req.body.transactionType,
+      amount: req.body.amount,
+      paymentMethod: req.body.paymentMethod,
+      description: req.body.paymentMethod,
+    });
 
-  // get the authenticated user informations
-
-  // create a new transaction instance
-
-  // check the type of transaction
-
+    // declare the variable balance
+    let newUserBalance = 0;
+  
+    // check the type of transaction
     // if transaction is deposit
+    if (newTransaction.transactionType === "DEPOSIT") {
       // user.balance = user.balance + transaction.amount
-    // else
-      // check if user.balance < transaction.amount
+      newUserBalance = user.balance + newTransaction.amount;
+
+      // Save the newBalance in user model
+      await user.updateOne({ balance: newUserBalance });
+    } else {
+      // else
+      if (user.balance < newTransaction.amount) {
+        // check if user.balance < transaction.amount
         // if true
           // raise an error ('Balance insuffisante')
+        res.status(400).json({ msg: "Balance insuffisante" })
+      } else {
         // else
           // user.balance = user.balance - transaction.amount
-  // update the user with new balance
-  // save the transaction to the database
-  
-  // return success with transaction details
+        newUserBalance = user.balance - newTransaction.amount;
 
-  res.send('Transactions Route')
+        await user.updateOne({ balance: newUserBalance });
+      }
+    }
+    // save the transaction to the database
+    const transaction = await newTransaction.save();
+    
+    
+    // return success with transaction details
+    res.status(200).json(transaction);
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'server error' })
+  }
 });
 
 
