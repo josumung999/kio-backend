@@ -51,7 +51,7 @@ router.post('/', [
     let newUserBalance = 0;
   
     // check the type of transaction
-    // if transaction is deposit
+    // if transaction is deposit we add amount to balance
     if (newTransaction.transactionType === "DEPOSIT") {
       // user.balance = user.balance + transaction.amount
       newUserBalance = user.balance + newTransaction.amount;
