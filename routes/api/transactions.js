@@ -44,7 +44,7 @@ router.post('/', [
       transactionType: req.body.transactionType,
       amount: req.body.amount,
       paymentMethod: req.body.paymentMethod,
-      description: req.body.paymentMethod,
+      description: req.body.description,
     });
 
     // declare the variable balance
