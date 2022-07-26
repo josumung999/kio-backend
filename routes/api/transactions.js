@@ -32,6 +32,25 @@ router.post('/', [
     return res.status(400).json({ errors: errors.array() });
   }
 
+  // get the authenticated user informations
+
+  // create a new transaction instance
+
+  // check the type of transaction
+
+    // if transaction is deposit
+      // user.balance = user.balance + transaction.amount
+    // else
+      // check if user.balance < transaction.amount
+        // if true
+          // raise an error ('Balance insuffisante')
+        // else
+          // user.balance = user.balance - transaction.amount
+  // update the user with new balance
+  // save the transaction to the database
+  
+  // return success with transaction details
+
   res.send('Transactions Route')
 });
 
