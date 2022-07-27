@@ -58,31 +58,62 @@ router.post('/', [
 
       // Save the newBalance in user model
       await user.updateOne({ balance: newUserBalance });
+
+      // save the transaction to the database
+      const transaction = await newTransaction.save();
+      // return success with transaction details
+      return res.status(200).json(transaction);
     } else {
       // else
       if (user.balance < newTransaction.amount) {
         // check if user.balance < transaction.amount
         // if true
           // raise an error ('Balance insuffisante')
-        res.status(400).json({ msg: "Balance insuffisante" })
+        return res.status(400).json({ msg: "Balance insuffisante" })
       } else {
         // else
           // user.balance = user.balance - transaction.amount
         newUserBalance = user.balance - newTransaction.amount;
 
         await user.updateOne({ balance: newUserBalance });
+
+
+        // save the transaction to the database
+        const transaction = await newTransaction.save();
+        // return success with transaction details
+        return res.status(200).json(transaction);
       }
     }
-    // save the transaction to the database
-    const transaction = await newTransaction.save();
-    
-    
-    // return success with transaction details
-    res.status(200).json(transaction);
 
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'server error' })
+  }
+});
+
+
+// @route GET api/transactions
+// @desc get all transactions
+// @access PRIVATE
+
+router.get('/', auth, async (req, res) => {
+
+  // get authenticated user informations
+  const user = await User.findById(req.user.id).select('-password');
+
+
+  try {
+    let transactions = {};
+    if (user.role === "admin") {
+      transactions = await Transaction.find();
+    } else {
+      transactions = await Transaction.find({ userId: req.user.id });
+    }
+
+    res.status(200).json(transactions);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'server error' });
   }
 });
 
