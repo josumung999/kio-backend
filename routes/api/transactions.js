@@ -101,7 +101,7 @@ router.get('/', auth, async (req, res) => {
   // get authenticated user informations
   const user = await User.findById(req.user.id).select('-password');
 
-
+  // this one is for getting all transactions
   try {
     let transactions = {};
     if (user.role === "admin") {
