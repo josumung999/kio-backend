@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const mongoose = require('mongoose')
 
 // Import auth middleware
 const auth = require('../../middleware/auth');
